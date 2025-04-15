@@ -9,6 +9,37 @@ const authRouter = require('./routers/authRouter.js')
 
 const app = express()
 
+const swaggerOptions = {
+    swaggerDefinition: {
+      openapi: '3.0.0',
+      info: {
+        title: "Auth API",
+        version: "1.0.0",
+        description: "Authentication API documentation"
+      },
+      servers: [
+        {
+          url: "http://localhost:" + (process.env.PORT || 3000)
+        }
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT"
+          }
+        }
+      }
+    },
+    apis: ['./routers/*.js'] // Points to all router files
+  };
+  
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions)
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
+
 app.use(cors())
 app.use(helmet());
 app.use(cookieParser());
